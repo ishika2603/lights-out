@@ -28,6 +28,34 @@ pred solved[b: Board] {
     // all l: Light | l.on = False
 }
 
+-- wellformed board
+pred wellformed[b: Board] {
+
+    -- within bounds
+    -- every piece on board has a light
+    
+
+}
+
+
+-- move
+pred move[pre: Board, r, c: Int, post: Board]{
+    -- GUARD
+
+
+    -- 
+
+}
+
+
+-- init (starting)
+pred init[]{
+
+    -- generate a starting board
+
+}
+
+
 
 
 

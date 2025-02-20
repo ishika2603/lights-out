@@ -1,1 +1,1 @@
-# 15-puzzle
+# lights-out
