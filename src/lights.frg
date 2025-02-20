@@ -43,7 +43,10 @@ pred move[pre: Board, r, c: Int, post: Board]{
     -- GUARD
 
 
-    -- 
+    -- ACTION
+
+
+    -- FRAMING
 
 }
 
