@@ -8,18 +8,18 @@ abstract sig Boolean {}
 one sig True, False extends Boolean {}
 
 sig Light {
-    on: one Boolean,
-    neighbors: lone Light
+    on: one Boolean
+    // neighbors: lone Light
 }
 
 sig Board {
     position: pfunc Int -> Int -> Light
 }
 
-// one sig Game {
-//     initialState: one Board,
-//     nextState: pfunc Board -> Board
-// }
+one sig Game {
+    initialState: one Board,
+    nextState: pfunc Board -> Board
+}
 
 -- defines toggling of a light: flips on/off and for neighbors
 // pred toggle[l: Light] {
@@ -28,12 +28,12 @@ sig Board {
 // }
 
 -- fully solved board condition: all lights are off
-// pred solved[b: Board] {
-//     all row, col: Int | {
-//         b.position[row][col].on = False
-//     }
-//     // all l: Light | l.on = False
-// }
+pred solved[b: Board] {
+    all row, col: Int | {
+        some l: Light | b.position[row][col] = l => l.on = False
+    }
+    // all l: Light | l.on = False
+}
 
 -- define valid neighbors
 // pred neighbors[l: Light, b: Board] {
@@ -60,20 +60,20 @@ sig Board {
 pred wellformed[b: Board] {
 
     all row, col: Int | {
-        // TODO: right now it is 3x3
         -- within bounds
         -- every piece on board has a light
         (row >= 0 and row <= 2 and col >= 0 and col <= 2) implies {
-            some b.position[row][col] 
+            some b.position[row][col]
         } else no b.position[row][col]
 
-        -- at most one light at each position
-        // lone b.position[row][col]
     }
+
+    -- all lights must be on the board
+    all l: Light | some row, col: Int | l = b.position[row][col]
 
     -- no two lights on the board are the same
     all row1, col1, row2, col2: Int | {
-        some b.position[row1][col1] and some b.position[row2][col2] and (row1 != row2 or col1 != col2) implies {
+        (some b.position[row1][col1] and some b.position[row2][col2] and (row1 != row2 or col1 != col2)) implies {
             b.position[row1][col1] != b.position[row2][col2]
         }
     }
@@ -134,12 +134,12 @@ pred gameTrace {
 
 }
 
-test1: run {
+startingBoard: run {
     some b: Board | { 
         wellformed[b]
-        // init[b] 
+        init[b] 
     }
-} for exactly 1 Board, 4 Int
+} for exactly 1 Board, 9 Light, 4 Int
 
 
 
