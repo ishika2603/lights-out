@@ -174,6 +174,8 @@ pred move[pre: Board, r, c: Int, post: Board]{
 
 }
 
+-- impossible starting states??
+
 
 pred gameTrace {
 
