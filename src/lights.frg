@@ -32,68 +32,29 @@ one sig Game {
     nextState: pfunc Board -> Board
 }
 
--- defines toggling of a light: flips on/off and for neighbors
-pred toggle[pre: Board, row, col: Int, post: Board] {
-
-    -- ensure valid row, col being toggled
-    row >= 0 
-    row <= 2 
-    col >= 0
-    col <= 2
-    
-    -- check that there is a light at row, col 
-    -- then flip it and neighbors in post,
-    some l: Light | {
-        pre.position[row][col] = l
-        
-        // if l is on, then it is off on post
-        // if l is off, then it is on on post
-        (l.on = True) implies some l2: Light | {
-            post.position[row][col] = l2
-            l2.on = False
-        }
-        (l.on = False) implies some l2: Light | {
-            post.position[row][col] = l2
-            l2.on = True
-        }
-    }
-
-    -- other squares stay the same  ("frame condition")
-    all row2: Int, col2: Int | (row!=row2 or col!=col2) implies {
-        post.position[row2][col2] = pre.position[row2][col2]
-    }
-    // l.on = not l.on
-    // all n: l.neighbors | n.on' = not n.on
-}
-
 -- fully solved board condition: all lights are off
 pred solved[b: Board] {
     all row, col: Int | {
-        some l: Light | b.position[row][col] = l => l.on = False
+        some l: Light | b.position[row][col] = l implies l.on = False
     }
     // all l: Light | l.on = False
 }
 
 -- define valid neighbors
-// pred neighbors[l: Light, b: Board] {
-//     all row, col: Int | {
-//         (l in b.position[row][col]) implies {
-//             -- list possible neighbors based on row/col position
-//             let neighborsSet = set {
-//                 -- Check up
-//                 if row > 0 then some b.position[subtract[]][col] else no,
-//                 -- Check down
-//                 if row < 2 then some b.position[add[row,1]][col] else no,
-//                 -- Check left
-//                 if col > 0 then some b.position[row][subtract[col-1]] else no,
-//                 -- Check right
-//                 if col < 2 then some b.position[row][add[col,1]] else no
-//             }
-//             -- ensure the neighbors list is valid
-//             l.neighbors = neighborsSet
-//         }
-//     }
-// }
+// (used within wellformed, helper predicate)
+pred validneighbors[l: Light, b: Board] {
+    some row, col: Int | {
+        l = b.position[row][col]
+        -- check up
+        (row > 0) implies (some lu: Light | b.position[subtract[row, 1]][col] = lu and l.up = lu) else no l.up 
+        -- check down
+        (row < 2) implies (some ld: Light | b.position[add[row, 1]][col] = ld and l.down = ld) else no l.down
+        -- check right
+        (col < 2) implies (some lr: Light | b.position[row][add[col, 1]] = lr and l.right = lr) else no l.right
+        -- check left
+        (col > 0) implies (some ll: Light | b.position[row][subtract[col, 1]] = ll and l.left = ll) else no l.left
+    }
+}
 
 -- wellformed board
 pred wellformed[b: Board] {
@@ -117,17 +78,10 @@ pred wellformed[b: Board] {
         }
     }
 
-    // all l: Light | {
-    //     -- Neighbors must be within valid range
-    //     all n: l.neighbors | some row, col: Int | {
-    //         (row >= 0 and row <= 2 and col >= 0 and col <= 2)
-    //         n = b.position[row][col]
-    //     }
-
-    //     -- TODO: define valid neighbors
-    //     // neighbors[l, b]
-
-    // }
+    -- ensure all lights have valid neighbors
+    all l: Light | {
+        validneighbors[l, b]
+    }
 }
 
 -- init (starting)
@@ -150,7 +104,63 @@ pred init[b: Board]{
     }
 }
 
+-- defines toggling of a light: flips on/off and for neighbors
+pred toggle[pre: Board, row, col: Int, post: Board] {
 
+    -- ensure valid row, col being toggled
+    row >= 0 
+    row <= 2 
+    col >= 0
+    col <= 2
+    
+    -- check that there is a light at row, col 
+    some l: Light | {
+        pre.position[row][col] = l
+    }
+
+    -- maybe initially make the light on new board the same?
+    // post.position[row][col] 
+
+    -- then flip it and neighbors in post
+    let oldLight = pre.position[row][col], newLight = post.position[row][col] | {
+        // if l is on, then it is off on post
+        // if l is off, then it is on on post
+        oldLight.on = True implies newLight.on = False else newLight.on = True
+
+        some l: Light | {
+            oldLight.up = l
+            l.on = True implies newLight.up.on = False else newLight.up.on = True
+        } 
+        some l: Light | {
+            oldLight.down = l
+            l.on = True implies newLight.down.on = False else newLight.down.on = True
+        } 
+        some l: Light | {
+            oldLight.right = l
+            l.on = True implies newLight.right.on = False else newLight.right.on = True
+        } 
+        some l: Light | {
+            oldLight.left = l
+            l.on = True implies newLight.left.on = False else newLight.left.on = True
+        } 
+    }
+
+    //     (l.on = True) implies some l2: Light | {
+    //         post.position[row][col] = l2
+    //         l2.on = False
+    //     }
+    //     (l.on = False) implies some l2: Light | {
+    //         post.position[row][col] = l2
+    //         l2.on = True
+    //     }
+    // }
+
+
+    -- other squares stay the same  ("frame condition")
+    all row2: Int, col2: Int | (row!=row2 or col!=col2) implies {
+        post.position[row2][col2] = pre.position[row2][col2]
+    }
+}
 
 -- move
 pred move[pre: Board, r, c: Int, post: Board]{
@@ -165,11 +175,10 @@ pred move[pre: Board, r, c: Int, post: Board]{
 }
 
 
-
-
 pred gameTrace {
 
 }
+
 
 startingBoard: run {
     some b: Board | { 
