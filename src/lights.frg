@@ -20,7 +20,7 @@ one sig Game {
     initialState: one Board,
     nextState: pfunc Board -> Board
 }
-
+ 
 -- defines toggling of a light: flips on/off and for neighbors
 // pred toggle[l: Light] {
 //     l.on' = not l.on
@@ -55,6 +55,8 @@ pred solved[b: Board] {
 //         }
 //     }
 // }
+
+
 
 -- wellformed board
 pred wellformed[b: Board] {
@@ -92,6 +94,23 @@ pred wellformed[b: Board] {
     //     #l.neighbors <= 4
     // }
 }
+
+/*pred press[p: Position] {
+    -- Define adjacency relationships
+    let neighbors = {
+        P1 -> (P2 + P4),
+        P2 -> (P1 + P3 + P5),
+        P3 -> (P2 + P6),
+        P4 -> (P1 + P5 + P7),
+        P5 -> (P2 + P4 + P6 + P8),
+        P6 -> (P3 + P5 + P9),
+        P7 -> (P4 + P8),
+        P8 -> (P5 + P7 + P9),
+        P9 -> (P6 + P8)
+    } |
+    -- Toggle pressed position and its neighbors
+    all l: Light | l in p.(neighbors + p) implies toggle[l]
+}*/
 
 -- init (starting)
 pred init[b: Board]{
