@@ -28,8 +28,8 @@ sig Board {
 -- holds the initial board state and then acts as a wrapper of a 
 -- linkedlist to get to newer board states
 one sig Game {
-    initialState: one Board,
-    nextState: pfunc Board -> Board
+    first: one Board,
+    next: pfunc Board -> Board
 }
 
 -- fully solved board condition: all lights are off
@@ -37,7 +37,6 @@ pred solved[b: Board] {
     all row, col: Int | {
         some l: Light | b.position[row][col] = l implies l.on = False
     }
-    // all l: Light | l.on = False
 }
 
 -- define valid neighbors
@@ -105,6 +104,7 @@ pred init[b: Board]{
 }
 
 -- defines toggling of a light: flips on/off and for neighbors
+-- transitions from one board state to next
 pred toggle[pre: Board, row, col: Int, post: Board] {
 
     -- ensure valid row, col being toggled
@@ -117,9 +117,6 @@ pred toggle[pre: Board, row, col: Int, post: Board] {
     some l: Light | {
         pre.position[row][col] = l
     }
-
-    -- maybe initially make the light on new board the same?
-    // post.position[row][col] 
 
     -- then flip it and neighbors in post
     let oldLight = pre.position[row][col], newLight = post.position[row][col] | {
@@ -145,40 +142,42 @@ pred toggle[pre: Board, row, col: Int, post: Board] {
         } 
     }
 
-    //     (l.on = True) implies some l2: Light | {
-    //         post.position[row][col] = l2
-    //         l2.on = False
-    //     }
-    //     (l.on = False) implies some l2: Light | {
-    //         post.position[row][col] = l2
-    //         l2.on = True
-    //     }
-    // }
-
-
     -- other squares stay the same  ("frame condition")
     all row2: Int, col2: Int | (row!=row2 or col!=col2) implies {
         post.position[row2][col2] = pre.position[row2][col2]
     }
 }
 
--- move
-pred move[pre: Board, r, c: Int, post: Board]{
-    -- GUARD
 
+pred gameTrace {
+    // -- Start with the initial state
+    // some last: Board | no Game.nextState[last]  -- Terminal state
+    // Game.initialState in Board  -- Initial board must exist
+    // all b: Board | some Game.nextState[b] => {
+    //     some r, c: Int | toggle[b, r, c, Game.nextState[b]]
+    // }
+    // some b: Board | solved[b]  -- Solution must be reachable
 
-    -- ACTION
+    // some firstState: Board | some lastState: Board | {
+    //     Game.initialState = firstState
+    //     init[firstState]
+    //     wellformed[firstState]
+    //     no b: Board | 
+    // }
 
+    init[Game.first]
+    wellformed[Game.first]
+    all b: Board | { some Game.next[b] implies {
+        some row, col: Int | 
+            toggle[b, row, col, Game.next[b]]
+    }}
 
-    -- FRAMING
+    some b: Board | solved[b]
 
 }
 
--- impossible starting states??
-
-
-pred gameTrace {
-
+pred noTrivialCycles {
+    all b: Board | some Game.next[b] implies b != Game.next[b]
 }
 
 
@@ -188,6 +187,9 @@ startingBoard: run {
         init[b] 
     }
 } for exactly 1 Board, 9 Light, 4 Int
+
+
+traceBoards: run {gameTrace} for 2 Board, 9 Light, 4 Int for {next is linear}
 
 
 
