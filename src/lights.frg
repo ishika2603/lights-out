@@ -33,10 +33,13 @@ one sig Game {
 }
 
 -- fully solved board condition: all lights are off
-pred solved[b: Board] {
-    all row, col: Int | {
-        some l: Light | b.position[row][col] = l implies l.on = False
+pred solved {
+    all l: Light | {
+        l.on = False
     }
+    // all row, col: Int | {
+    //     some l: Light | b.position[row][col] = l implies l.on = False
+    // }
 }
 
 -- define valid neighbors
@@ -214,6 +217,14 @@ startingBoard: run {
         init[b] 
     }
 } for exactly 1 Board, 9 Light, 4 Int
+
+solvedBoard: run {
+    some b: Board | { 
+        wellformed[b]
+        solved 
+    }
+} for exactly 1 Board, 9 Light, 4 Int
+
 
 
 traceBoards: run {gameTrace} for 2 Board, 9 Light, 4 Int for {next is linear}
