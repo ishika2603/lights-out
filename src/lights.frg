@@ -32,14 +32,21 @@ one sig Game {
     next: pfunc Board -> Board
 }
 
+-- defines bounds of 3x3 board
+pred within_bounds[row, col: Int] {
+    row >= 0 
+    row <= 2 
+    col >= 0
+    col <= 2
+}
+
 -- fully solved board condition: all lights are off
-pred solved {
-    all l: Light | {
-        l.on = False
+pred solved[b: Board] {
+    // all l: Light | l.on = False
+    all row, col: Int | {
+        // some l: Light | b.position[row][col] = l implies l.on = False
+        within_bounds[row, col] implies (b.position[row][col]).on = False
     }
-    // all row, col: Int | {
-    //     some l: Light | b.position[row][col] = l implies l.on = False
-    // }
 }
 
 -- define valid neighbors
@@ -210,7 +217,6 @@ pred noTrivialCycles {
     all b: Board | some Game.next[b] implies b != Game.next[b]
 }
 
-
 startingBoard: run {
     some b: Board | { 
         wellformed[b]
@@ -218,13 +224,24 @@ startingBoard: run {
     }
 } for exactly 1 Board, 9 Light, 4 Int
 
+
+// giving weird result....
+twoBoards: run {
+    some b1, b2: Board | { 
+        init[b1]
+        wellformed[b1]
+        // toggle??
+        wellformed[b2]
+        solved[b2] 
+    }
+} for exactly 2 Board, 9 Light, 4 Int
+
 solvedBoard: run {
     some b: Board | { 
         wellformed[b]
-        solved 
+        solved[b] 
     }
 } for exactly 1 Board, 9 Light, 4 Int
-
 
 
 traceBoards: run {gameTrace} for 2 Board, 9 Light, 4 Int for {next is linear}
