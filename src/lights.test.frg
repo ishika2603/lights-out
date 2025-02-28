@@ -492,7 +492,7 @@ test suite for toggle {
         `L22.on = `PreBoard -> `True + `PostBoard -> `True
         }
 
-    // Positive case: toggling the center cell (1,1) flips its state and that of its neighbors.
+    // Positive case: toggling the side cell (2,1) flips its state and that of its neighbors.
     example validToggleSide is {some pre, post: Board | toggle[pre, 2, 1, post] } for {
         Board = `PreBoard + `PostBoard
         Light = `L00 + `L01 + `L02 +
@@ -546,17 +546,17 @@ test suite for toggle {
         `L22.left  = `L21
 
         // Row 0:
-        `L00.on = `PreBoard -> `True + `PostBoard -> `True
-        `L01.on = `PreBoard -> `False + `PostBoard -> `True
-        `L02.on = `PreBoard -> `True + `PostBoard -> `True
+        `L00.on = `PreBoard -> `False + `PostBoard -> `False
+        `L01.on = `PreBoard -> `False + `PostBoard -> `False
+        `L02.on = `PreBoard -> `False + `PostBoard -> `False
         // Row 1:
-        `L10.on = `PreBoard -> `False + `PostBoard -> `True
-        `L11.on = `PreBoard -> `True + `PostBoard -> `False  // cell (1,1) toggled
-        `L12.on = `PreBoard -> `False + `PostBoard -> `True
+        `L10.on = `PreBoard -> `False + `PostBoard -> `False
+        `L11.on = `PreBoard -> `True + `PostBoard -> `False  
+        `L12.on = `PreBoard -> `False + `PostBoard -> `False
         // Row 2:
-        `L20.on = `PreBoard -> `True + `PostBoard -> `True
-        `L21.on = `PreBoard -> `False + `PostBoard -> `True
-        `L22.on = `PreBoard -> `True + `PostBoard -> `True
+        `L20.on = `PreBoard -> `True + `PostBoard -> `False
+        `L21.on = `PreBoard -> `True + `PostBoard -> `False // cell (2,1) toggled
+        `L22.on = `PreBoard -> `False + `PostBoard -> `True
         }
 
 }

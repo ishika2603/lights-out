@@ -213,6 +213,7 @@ pred gameTrace {
     }}
 
     allWellformed
+    noCycles
 
     // some b: Board | solved[b]
 
@@ -220,6 +221,12 @@ pred gameTrace {
 
 pred noTrivialCycles {
     all b: Board | some Game.next[b] implies b != Game.next[b]
+}
+
+pred noCycles {
+  all b: Board | 
+    b in reachable[Game.first, next] implies 
+      b not in reachable[b, next]
 }
 
 -- shows a valid starting board config
