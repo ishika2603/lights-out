@@ -269,6 +269,7 @@ test suite for solved {
 
     // positive case: all lights are off
     example winningboard is (all b: Board | solved[b]) for {
+        Board = `Board0
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
                 `L20 + `L21 + `L22
@@ -277,15 +278,15 @@ test suite for solved {
         True = `True
         False = `False
 
-        `L00.on = `False
-        `L10.on = `False
-        `L20.on = `False
-        `L11.on = `False
-        `L12.on = `False
-        `L22.on = `False
-        `L01.on = `False
-        `L02.on = `False
-        `L21.on = `False
+        `L00.on = `Board0 -> `False
+        `L10.on = `Board0 -> `False
+        `L20.on = `Board0 -> `False
+        `L11.on = `Board0 -> `False
+        `L12.on = `Board0 -> `False
+        `L22.on = `Board0 -> `False
+        `L01.on = `Board0 -> `False
+        `L02.on = `Board0 -> `False
+        `L21.on = `Board0 -> `False
     }
 
     // positive case: all lights off, but attached to 2 diff boards (shouldnt make a difference)
@@ -295,10 +296,7 @@ test suite for solved {
         Board = `Board0 + `Board1
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
-                `L20 + `L21 + `L22 +
-                `L100 + `L101 + `L102 +
-                `L110 + `L111 + `L112 +
-                `L120 + `L121 + `L122
+                `L20 + `L21 + `L22
 
         Boolean = `True + `False
         True = `True
@@ -312,41 +310,28 @@ test suite for solved {
             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
         `Board1.position =
-            (0,0) -> `L100 + (0,1) -> `L101 + (0,2) -> `L102 +
-            (1,0) -> `L110 + (1,1) -> `L111 + (1,2) -> `L112 +
-            (2,0) -> `L120 + (2,1) -> `L121 + (2,2) -> `L122
+            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+            (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+            (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
-        `L00.on = `True
-        `L10.on = `False
-        `L20.on = `False
-        `L11.on = `False
-        `L12.on = `True
-        `L22.on = `True
-        `L01.on = `False
-        `L02.on = `True
-        `L21.on = `True
-
-        `L100.on = `False
-        `L110.on = `False
-        `L120.on = `False
-        `L111.on = `False
-        `L112.on = `False
-        `L122.on = `False
-        `L101.on = `False
-        `L102.on = `False
-        `L121.on = `False
+        `L00.on = `Board0 -> `True + `Board1 -> `False
+        `L10.on = `Board0 -> `False + `Board1 -> `False
+        `L20.on = `Board0 -> `False + `Board1 -> `False
+        `L11.on = `Board0 -> `False + `Board1 -> `False
+        `L12.on = `Board0 -> `True + `Board1 -> `False
+        `L22.on = `Board0 -> `True + `Board1 -> `False
+        `L01.on = `Board0 -> `False + `Board1 -> `False
+        `L02.on = `Board0 -> `True + `Board1 -> `False
+        `L21.on = `Board0 -> `True + `Board1 -> `False
     }
 
     // negative case: no board is solved
-    example losingboard is (some g: Game | all b: Board | not solved[b]) for {
-        Game = `Game0
+    example losingboard is (all b: Board | not solved[b]) for {
+                Game = `Game0
         Board = `Board0 + `Board1
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
-                `L20 + `L21 + `L22 +
-                `L100 + `L101 + `L102 +
-                `L110 + `L111 + `L112 +
-                `L120 + `L121 + `L122
+                `L20 + `L21 + `L22
 
         Boolean = `True + `False
         True = `True
@@ -360,45 +345,88 @@ test suite for solved {
             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
         `Board1.position =
-            (0,0) -> `L100 + (0,1) -> `L101 + (0,2) -> `L102 +
-            (1,0) -> `L110 + (1,1) -> `L111 + (1,2) -> `L112 +
-            (2,0) -> `L120 + (2,1) -> `L121 + (2,2) -> `L122
+            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+            (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+            (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
-        `L00.on = `True
-        `L10.on = `False
-        `L20.on = `False
-        `L11.on = `False
-        `L12.on = `True
-        `L22.on = `True
-        `L01.on = `False
-        `L02.on = `True
-        `L21.on = `True
-
-        `L100.on = `False
-        `L110.on = `False
-        `L120.on = `False
-        `L111.on = `False
-        `L112.on = `True
-        `L122.on = `False
-        `L101.on = `False
-        `L102.on = `True
-        `L121.on = `False
+        `L00.on = `Board0 -> `True + `Board1 -> `False
+        `L10.on = `Board0 -> `False + `Board1 -> `False
+        `L20.on = `Board0 -> `False + `Board1 -> `False
+        `L11.on = `Board0 -> `False + `Board1 -> `False
+        `L12.on = `Board0 -> `True + `Board1 -> `False
+        `L22.on = `Board0 -> `True + `Board1 -> `False
+        `L01.on = `Board0 -> `False + `Board1 -> `False
+        `L02.on = `Board0 -> `True + `Board1 -> `False
+        `L21.on = `Board0 -> `True + `Board1 -> `True
     }
-
-
-
-
 }
 
-test suite for init {
+// test suite for init {
+
+//     // positive case: board with at least one light on
+//     example validInit is {all b: Board | init[b] } for {
+//         Game = `Game0
+//         Board = `Board0
+//         Light = `L00 + `L01 + `L02 +
+//                 `L10 + `L11 + `L12 +
+//                 `L20 + `L21 + `L22
+//         Boolean = `True + `False
+//         True = `True
+//         False = `False
+
+//         `Game0.first = `Board0
+
+//         `Board0.position =
+//             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+//             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+//             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
+
+//         `L00.on = `False
+//         `L10.on = `False
+//         `L20.on = `False
+//         `L11.on = `False
+//         `L12.on = `False
+//         `L22.on = `True
+//         `L01.on = `False
+//         `L02.on = `False
+//         `L21.on = `False
+//     }
+
+//     // negative case: all lights off
+//     example invalidInit is {all b: Board | not init[b] } for {
+//         Game = `Game0
+//         Board = `Board0
+//         Light = `L00 + `L01 + `L02 +
+//                 `L10 + `L11 + `L12 +
+//                 `L20 + `L21 + `L22
+//         Boolean = `True + `False
+//         True = `True
+//         False = `False
+
+//         `Game0.first = `Board0
+
+//         `Board0.position =
+//             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+//             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+//             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
+
+//         `L00.on = `False
+//         `L10.on = `False
+//         `L20.on = `False
+//         `L11.on = `False
+//         `L12.on = `False
+//         `L22.on = `False
+//         `L01.on = `False
+//         `L02.on = `False
+//         `L21.on = `False
+//     }
+
+// }
+
+// test suite for toggle {
 
 
-}
-
-test suite for toggle {
-
-
-}
+// }
 
 
 
