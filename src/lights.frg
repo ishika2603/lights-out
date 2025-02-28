@@ -200,7 +200,7 @@ pred gameTrace {
     }
 
     allWellformed
-    noCycles
+    // noCycles -- not need if next is linear?
 }
 
 pred noCycles {
@@ -240,7 +240,7 @@ solvedBoard: run {
 
 traceBoards: run {gameTrace} for 5 Board, 9 Light, 4 Int for {next is linear}
 
--- may be too large a trace
+-- takes around a minute
 traceBoardslarge: run {gameTrace} for 10 Board, 9 Light, 4 Int for {next is linear}
 
 
