@@ -84,12 +84,15 @@ pred init[b: Board]{
     -- generate a starting board
     -- Randomly set each light ON or OFF
     all row, col: Int | {
-        let l = b.position[row][col] | some l => some l.on[b]
+        let l = b.position[row][col] | {
+            some l => (l.on[b] = True or l.on[b] = False)
+        }
     }
 
     -- ensure at least one light is on in the board
-    some row, col: Int | {
-        let l = b.position[row][col] | some l => l.on[b] = True
+    some l: Light, row, col: Int | {
+        l = b.position[row][col]
+        l.on[b] = True
     }
 }
 
