@@ -21,15 +21,10 @@ sig Light {
 }
 
 -- the board is essentially the State
+-- Acts as a wrapper of a linkedlist to get to newer board states
 sig Board {
-    position: pfunc Int -> Int -> Light
-}
-
--- holds the initial board state and then acts as a wrapper of a 
--- linkedlist to get to newer board states
-one sig Game {
-    first: one Board,
-    next: pfunc Board -> Board
+    position: pfunc Int -> Int -> Light,
+    next: lone Board
 }
 
 -- defines bounds of 3x3 board
@@ -42,10 +37,8 @@ pred within_bounds[row, col: Int] {
 
 -- fully solved board condition: all lights are off
 pred solved[b: Board] {
-    // all l: Light | l.on = False
-    all row, col: Int | {
-        // some l: Light | b.position[row][col] = l implies l.on = False
-        within_bounds[row, col] implies (b.position[row][col]).on[b] = False
+    all l: Light | {
+        l.on[b] = False
     }
 }
 
@@ -74,18 +67,11 @@ pred wellformed[b: Board] {
         within_bounds[row, col] implies {
             some b.position[row][col]
         } else no b.position[row][col]
-
     }
 
     -- all lights must be on the board
-    all l: Light | some row, col: Int | l = b.position[row][col]
-
     -- no two lights on the board are the same
-    all row1, col1, row2, col2: Int | {
-        (some b.position[row1][col1] and some b.position[row2][col2] and (row1 != row2 or col1 != col2)) implies {
-            b.position[row1][col1] != b.position[row2][col2]
-        }
-    }
+    all l: Light | one row, col: Int | l = b.position[row][col]
 
     -- ensure all lights have valid neighbors
     all l: Light | {
@@ -98,18 +84,12 @@ pred init[b: Board]{
     -- generate a starting board
     -- Randomly set each light ON or OFF
     all row, col: Int | {
-        some b.position[row][col] => {
-            some l: Light | {
-                l = b.position[row][col]
-                some l.on[b]
-            }
-        }
+        let l = b.position[row][col] | some l => some l.on[b]
     }
 
     -- ensure at least one light is on in the board
-    some l: Light, row, col: Int | {
-        l = b.position[row][col]
-        l.on[b] = True
+    some row, col: Int | {
+        let l = b.position[row][col] | some l => l.on[b] = True
     }
 }
 
@@ -197,36 +177,36 @@ pred toggle[pre: Board, row, col: Int, post: Board] {
     }
 }
 
-
 pred allWellformed { all b: Board | wellformed[b]}
 
 pred gameTrace {
-    // -- Start with the initial state
-    some last: Board | no Game.next[last] and solved[last]  -- Terminal state
 
-    init[Game.first]
-    wellformed[Game.first]
-    
-    all b: Board | { some Game.next[b] implies {
-        some row, col: Int | 
-            toggle[b, row, col, Game.next[b]]
-    }}
+    some firstBoard: Board | some lastBoard: Board | {
+        -- Start with the initial state
+        init[firstBoard]
+        wellformed[firstBoard]
+
+        no b: Board | b.next = firstBoard
+
+        all b: Board | { some b.next implies {
+            some row, col: Int | 
+                toggle[b, row, col, b.next]
+        }}
+
+        -- terminal state
+        no lastBoard.next
+        solved[lastBoard]
+
+    }
 
     allWellformed
     noCycles
-
-    // some b: Board | solved[b]
-
-}
-
-pred noTrivialCycles {
-    all b: Board | some Game.next[b] implies b != Game.next[b]
 }
 
 pred noCycles {
-  all b: Board | 
-    b in reachable[Game.first, next] implies 
-      b not in reachable[b, next]
+    all b: Board | {
+        not reachable[b, b, next]
+    }
 }
 
 -- shows a valid starting board config
@@ -245,6 +225,7 @@ twoBoards: run {
         toggle[b1, 1, 1, b2]
         wellformed[b2]
         solved[b2] 
+        b1.next = b2
     }
 } for exactly 2 Board, 9 Light, 4 Int
 
@@ -257,7 +238,10 @@ solvedBoard: run {
 } for exactly 1 Board, 9 Light, 4 Int
 
 
-traceBoards: run {gameTrace} for 3 Board, 9 Light, 4 Int for {next is linear}
+traceBoards: run {gameTrace} for 5 Board, 9 Light, 4 Int for {next is linear}
+
+-- may be too large a trace
+traceBoardslarge: run {gameTrace} for 10 Board, 9 Light, 4 Int for {next is linear}
 
 
 

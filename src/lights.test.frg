@@ -292,7 +292,6 @@ test suite for solved {
     // positive case: all lights off, but attached to 2 diff boards (shouldnt make a difference)
     // one is solved, one isnt
     example anotherwinningboard is (some b: Board | solved[b]) for {
-        Game = `Game0
         Board = `Board0 + `Board1
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
@@ -302,8 +301,7 @@ test suite for solved {
         True = `True
         False = `False
 
-        `Game0.first = `Board0
-        `Game0.next = `Board0 -> `Board1
+        `Board0.next = `Board1
 
         `Board0.position =
             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
@@ -327,7 +325,6 @@ test suite for solved {
 
     // negative case: no board is solved
     example losingboard is (all b: Board | not solved[b]) for {
-                Game = `Game0
         Board = `Board0 + `Board1
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
@@ -337,8 +334,7 @@ test suite for solved {
         True = `True
         False = `False
 
-        `Game0.first = `Board0
-        `Game0.next = `Board0 -> `Board1
+        `Board0.next = `Board1
 
         `Board0.position =
             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
@@ -365,7 +361,6 @@ test suite for init {
 
     // positive case: board with at least one light on
     example validInit is {all b: Board | init[b] } for {
-        Game = `Game0
         Board = `Board0
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
@@ -373,8 +368,6 @@ test suite for init {
         Boolean = `True + `False
         True = `True
         False = `False
-
-        `Game0.first = `Board0
 
         `Board0.position =
             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
@@ -394,7 +387,6 @@ test suite for init {
 
     // negative case: all lights off
     example invalidInit is {all b: Board | not init[b] } for {
-        Game = `Game0
         Board = `Board0
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
@@ -402,8 +394,6 @@ test suite for init {
         Boolean = `True + `False
         True = `True
         False = `False
-
-        `Game0.first = `Board0
 
         `Board0.position =
             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
@@ -446,37 +436,37 @@ test suite for toggle {
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
         `L00.right = `L01
-        `L00.down  = `L10
+        `L00.down = `L10
 
-        `L01.left  = `L00
+        `L01.left = `L00
         `L01.right = `L02
-        `L01.down  = `L11
+        `L01.down = `L11
 
-        `L02.left  = `L01
-        `L02.down  = `L12
+        `L02.left = `L01
+        `L02.down = `L12
 
-        `L10.up    = `L00
+        `L10.up = `L00
         `L10.right = `L11
-        `L10.down  = `L20
+        `L10.down = `L20
 
-        `L11.up    = `L01
-        `L11.left  = `L10
+        `L11.up = `L01
+        `L11.left = `L10
         `L11.right = `L12
-        `L11.down  = `L21
+        `L11.down = `L21
 
-        `L12.up    = `L02
-        `L12.left  = `L11
-        `L12.down  = `L22
+        `L12.up = `L02
+        `L12.left = `L11
+        `L12.down = `L22
 
-        `L20.up    = `L10
+        `L20.up = `L10
         `L20.right = `L21
 
-        `L21.up    = `L11
-        `L21.left  = `L20
+        `L21.up = `L11
+        `L21.left = `L20
         `L21.right = `L22
 
-        `L22.up    = `L12
-        `L22.left  = `L21
+        `L22.up = `L12
+        `L22.left = `L21
 
         // Row 0:
         `L00.on = `PreBoard -> `True + `PostBoard -> `True
@@ -513,37 +503,37 @@ test suite for toggle {
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
         `L00.right = `L01
-        `L00.down  = `L10
+        `L00.down = `L10
 
-        `L01.left  = `L00
+        `L01.left = `L00
         `L01.right = `L02
-        `L01.down  = `L11
+        `L01.down = `L11
 
-        `L02.left  = `L01
-        `L02.down  = `L12
+        `L02.left = `L01
+        `L02.down = `L12
 
-        `L10.up    = `L00
+        `L10.up = `L00
         `L10.right = `L11
-        `L10.down  = `L20
+        `L10.down = `L20
 
-        `L11.up    = `L01
-        `L11.left  = `L10
+        `L11.up = `L01
+        `L11.left = `L10
         `L11.right = `L12
-        `L11.down  = `L21
+        `L11.down = `L21
 
-        `L12.up    = `L02
-        `L12.left  = `L11
-        `L12.down  = `L22
+        `L12.up = `L02
+        `L12.left = `L11
+        `L12.down = `L22
 
-        `L20.up    = `L10
+        `L20.up = `L10
         `L20.right = `L21
 
-        `L21.up    = `L11
-        `L21.left  = `L20
+        `L21.up = `L11
+        `L21.left = `L20
         `L21.right = `L22
 
-        `L22.up    = `L12
-        `L22.left  = `L21
+        `L22.up = `L12
+        `L22.left = `L21
 
         // Row 0:
         `L00.on = `PreBoard -> `False + `PostBoard -> `False
