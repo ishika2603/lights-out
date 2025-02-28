@@ -250,7 +250,7 @@ solvedBoard: run {
 } for exactly 1 Board, 9 Light, 4 Int
 
 
-traceBoards: run {gameTrace} for 5 Board, 9 Light, 4 Int for {next is linear}
+traceBoards: run {gameTrace} for 3 Board, 9 Light, 4 Int for {next is linear}
 
 
 
