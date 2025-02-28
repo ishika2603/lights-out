@@ -361,72 +361,72 @@ test suite for solved {
     }
 }
 
-// test suite for init {
+test suite for init {
 
-//     // positive case: board with at least one light on
-//     example validInit is {all b: Board | init[b] } for {
-//         Game = `Game0
-//         Board = `Board0
-//         Light = `L00 + `L01 + `L02 +
-//                 `L10 + `L11 + `L12 +
-//                 `L20 + `L21 + `L22
-//         Boolean = `True + `False
-//         True = `True
-//         False = `False
+    // positive case: board with at least one light on
+    example validInit is {all b: Board | init[b] } for {
+        Game = `Game0
+        Board = `Board0
+        Light = `L00 + `L01 + `L02 +
+                `L10 + `L11 + `L12 +
+                `L20 + `L21 + `L22
+        Boolean = `True + `False
+        True = `True
+        False = `False
 
-//         `Game0.first = `Board0
+        `Game0.first = `Board0
 
-//         `Board0.position =
-//             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
-//             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
-//             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
+        `Board0.position =
+            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+            (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+            (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
-//         `L00.on = `False
-//         `L10.on = `False
-//         `L20.on = `False
-//         `L11.on = `False
-//         `L12.on = `False
-//         `L22.on = `True
-//         `L01.on = `False
-//         `L02.on = `False
-//         `L21.on = `False
-//     }
+        `L00.on = `Board0 -> `False
+        `L10.on = `Board0 -> `False
+        `L20.on = `Board0 -> `False
+        `L11.on = `Board0 -> `False
+        `L12.on = `Board0 -> `False
+        `L22.on = `Board0 -> `False
+        `L01.on = `Board0 -> `True
+        `L02.on = `Board0 -> `False
+        `L21.on = `Board0 -> `False
+    }
 
-//     // negative case: all lights off
-//     example invalidInit is {all b: Board | not init[b] } for {
-//         Game = `Game0
-//         Board = `Board0
-//         Light = `L00 + `L01 + `L02 +
-//                 `L10 + `L11 + `L12 +
-//                 `L20 + `L21 + `L22
-//         Boolean = `True + `False
-//         True = `True
-//         False = `False
+    // negative case: all lights off
+    example invalidInit is {all b: Board | not init[b] } for {
+        Game = `Game0
+        Board = `Board0
+        Light = `L00 + `L01 + `L02 +
+                `L10 + `L11 + `L12 +
+                `L20 + `L21 + `L22
+        Boolean = `True + `False
+        True = `True
+        False = `False
 
-//         `Game0.first = `Board0
+        `Game0.first = `Board0
 
-//         `Board0.position =
-//             (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
-//             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
-//             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
+        `Board0.position =
+            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+            (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+            (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
-//         `L00.on = `False
-//         `L10.on = `False
-//         `L20.on = `False
-//         `L11.on = `False
-//         `L12.on = `False
-//         `L22.on = `False
-//         `L01.on = `False
-//         `L02.on = `False
-//         `L21.on = `False
-//     }
+        `L00.on = `Board0 -> `False
+        `L10.on = `Board0 -> `False
+        `L20.on = `Board0 -> `False
+        `L11.on = `Board0 -> `False
+        `L12.on = `Board0 -> `False
+        `L22.on = `Board0 -> `False
+        `L01.on = `Board0 -> `False
+        `L02.on = `Board0 -> `False
+        `L21.on = `Board0 -> `False
+    }
 
-// }
+}
 
-// test suite for toggle {
+test suite for toggle {
 
 
-// }
+}
 
 
 

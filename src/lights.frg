@@ -11,9 +11,9 @@ one sig True, False extends Boolean {}
 
 -- defines a light square, and its neighbors
 sig Light {
-    -- True if on, False if off
+    -- True if on, False if off (specific to Board state)
     on: pfunc Board -> Boolean,
-    -- neighbors (lone because of border pieces)
+    -- neighbors (lone because of border pieces, should be same across boards)
     up: lone Light,
     down: lone Light, 
     right: lone Light,
@@ -132,23 +132,23 @@ pred init[b: Board]{
 //     let oldLight = pre.position[row][col], newLight = post.position[row][col] | {
 //         // if l is on, then it is off on post
 //         // if l is off, then it is on on post
-//         oldLight.on = True implies newLight.on = False else newLight.on = True
+//         oldLight.on[pre] = True implies newLight.on[post] = False else newLight.on[post] = True
 
 //         some l: Light | {
 //             oldLight.up = l
-//             l.on = True implies newLight.up.on = False else newLight.up.on = True
+//             l.on[pre] = True implies newLight.up.on[post] = False else newLight.up.on[post] = True
 //         } 
 //         some l: Light | {
 //             oldLight.down = l
-//             l.on = True implies newLight.down.on = False else newLight.down.on = True
+//             l.on[pre] = True implies newLight.down.on[post] = False else newLight.down.on[post] = True
 //         } 
 //         some l: Light | {
 //             oldLight.right = l
-//             l.on = True implies newLight.right.on = False else newLight.right.on = True
+//             l.on[pre] = True implies newLight.right.on[post] = False else newLight.right.on[post] = True
 //         } 
 //         some l: Light | {
 //             oldLight.left = l
-//             l.on = True implies newLight.left.on = False else newLight.left.on = True
+//             l.on[pre] = True implies newLight.left.on[post] = False else newLight.left.on[post] = True
 //         } 
 //     }
 
@@ -158,59 +158,61 @@ pred init[b: Board]{
 //     }
 // }
 
-// -- defines toggling of a light: flips on/off and for neighbors
-// -- transitions from one board state to next
-// pred toggle[pre: Board, row, col: Int, post: Board] {
+-- defines toggling of a light: flips on/off and for neighbors
+-- transitions from one board state to next
+pred toggle[pre: Board, row, col: Int, post: Board] {
 
-//     -- ensure valid row, col being toggled
-//     within_bounds[row, col]
+    -- ensure valid row, col being toggled
+    within_bounds[row, col]
 
-//     -- check that there is a light at row, col 
-//     some pre.position[row][col]
+    -- check that there is a light at row, col 
+    some pre.position[row][col]
 
-//     -- For every cell (r,c) in the board (that has a light), copy the neighbor pointers and update the on state as required.
-//     all r, c: Int | some pre.position[r][c] implies {
-//         let oldL = pre.position[r][c],
-//             newL = post.position[r][c] |
-//         newL.up    = oldL.up    and
-//         newL.down  = oldL.down  and
-//         newL.left  = oldL.left  and
-//         newL.right = oldL.right and
+    -- For every cell (r,c) in the board (that has a light), copy the neighbor pointers and update the on state as required.
+    all r, c: Int | some pre.position[r][c] implies {
+        let oldL = pre.position[r][c],
+            newL = post.position[r][c] |
+        newL.up    = oldL.up    and
+        newL.down  = oldL.down  and
+        newL.left  = oldL.left  and
+        newL.right = oldL.right and
 
-//         -- If (r,c) is the toggled cell or a neighbor, then toggle the on state:
-//         (((r = row and c = col) or
-//           (r = subtract[row, 1] and c = col) or
-//           (r = add[row, 1] and c = col) or
-//           (r = row and c = subtract[col, 1]) or
-//           (r = row and c = add[col, 1]))
-//           implies 
-//              ((oldL.on = True implies newL.on = False) and
-//               (oldL.on = False implies newL.on = True)))
-//         and
-//         -- If (r,c) is not the toggled cell or a neighbor, then the on state remains unchanged:
-//         ((not ((r = row and c = col) or
-//                (r = subtract[row, 1] and c = col) or
-//                (r = add[row, 1] and c = col) or
-//                (r = row and c = subtract[col, 1]) or
-//                (r = row and c = add[col, 1])))
-//           implies newL.on = oldL.on)
-//     }
-// }
+        -- If (r,c) is the toggled cell or a neighbor, then toggle the on state:
+        (((r = row and c = col) or
+          (r = subtract[row, 1] and c = col) or
+          (r = add[row, 1] and c = col) or
+          (r = row and c = subtract[col, 1]) or
+          (r = row and c = add[col, 1]))
+          implies 
+             ((oldL.on[pre] = True implies newL.on[post] = False) and
+              (oldL.on[pre] = False implies newL.on[post] = True)))
+        and
+        -- If (r,c) is not the toggled cell or a neighbor, then the on state remains unchanged:
+        ((not ((r = row and c = col) or
+               (r = subtract[row, 1] and c = col) or
+               (r = add[row, 1] and c = col) or
+               (r = row and c = subtract[col, 1]) or
+               (r = row and c = add[col, 1])))
+          implies newL.on[post] = oldL.on[pre])
+    }
+}
 
 
 pred allWellformed { all b: Board | wellformed[b]}
 
 pred gameTrace {
     // -- Start with the initial state
-    some last: Board | no Game.next[last]  -- Terminal state
+    some last: Board | no Game.next[last] and solved[last]  -- Terminal state
 
     init[Game.first]
     wellformed[Game.first]
     
-    // all b: Board | { some Game.next[b] implies {
-    //     some row, col: Int | 
-    //         // toggle[b, row, col, Game.next[b]]
-    // }}
+    all b: Board | { some Game.next[b] implies {
+        some row, col: Int | 
+            toggle[b, row, col, Game.next[b]]
+    }}
+
+    allWellformed
 
     // some b: Board | solved[b]
 
@@ -220,6 +222,7 @@ pred noTrivialCycles {
     all b: Board | some Game.next[b] implies b != Game.next[b]
 }
 
+-- shows a valid starting board config
 startingBoard: run {
     some b: Board | { 
         wellformed[b]
@@ -227,16 +230,18 @@ startingBoard: run {
     }
 } for exactly 1 Board, 9 Light, 4 Int
 
+-- should show state that turns into solved board with one move
 twoBoards: run {
     some b1, b2: Board | { 
         init[b1]
         wellformed[b1]
-        // toggle??
+        toggle[b1, 1, 1, b2]
         wellformed[b2]
         solved[b2] 
     }
 } for exactly 2 Board, 9 Light, 4 Int
 
+-- shows valid solved board config
 solvedBoard: run {
     some b: Board | { 
         wellformed[b]
@@ -245,7 +250,7 @@ solvedBoard: run {
 } for exactly 1 Board, 9 Light, 4 Int
 
 
-traceBoards: run {gameTrace} for 2 Board, 9 Light, 4 Int for {next is linear}
+traceBoards: run {gameTrace} for 5 Board, 9 Light, 4 Int for {next is linear}
 
 
 
