@@ -137,6 +137,7 @@ pred toggle[pre: Board, row, col: Int, post: Board] {
         }
     }
 }
+//making sure that the board is not refering to itself. 
 
 pred allWellformed { all b: Board | wellformed[b]}
 
@@ -146,7 +147,7 @@ pred gameTrace {
         -- Start with the initial state
         init[firstBoard]
         wellformed[firstBoard]
-
+        
         no b: Board | b.next = firstBoard
 
         all b: Board | { some b.next implies {
@@ -161,14 +162,11 @@ pred gameTrace {
     }
 
     allWellformed
-    // noCycles -- not needed if next is linear?
+    
 }
 
-pred noCycles {
-    all b: Board | {
-        not reachable[b, b, next]
-    }
-}
+
+//making sure that the max trace lengths is 30 
 
 -- shows a valid starting board config
 startingBoard: run {
@@ -178,6 +176,8 @@ startingBoard: run {
     }
 } for exactly 1 Board, 9 Light, 4 Int
 
+//making sure that the max trace lengths is 30 
+option max_tracelength 30
 -- should show state that turns into solved board with one move
 twoBoards: run {
     some b1, b2: Board | { 
@@ -188,7 +188,12 @@ twoBoards: run {
         solved[b2] 
         b1.next = b2
     }
-} for exactly 2 Board, 9 Light, 4 Int
+    gameTrace
+    //Having a randomly initialized board and try to trace whether there is final solution or not. 
+    //as the b2 is the next of the b1, so b2 should contain the turn into a final state with all false
+    //we successfully tested out the the result, it will truns all the lights to a false in the b2. 
+    //
+} for exactly 2 Board, 9 Light, 4 Int for {next is linear}
 
 -- shows valid solved board config
 solvedBoard: run {
