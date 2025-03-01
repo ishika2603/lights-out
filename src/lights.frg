@@ -138,6 +138,12 @@ pred toggle[pre: Board, row, col: Int, post: Board] {
     }
 }
 
+pred noCycles {
+    all b: Board | {
+        not reachable[b, b, next]
+    }
+}
+
 pred allWellformed { all b: Board | wellformed[b]}
 
 pred gameTrace {
@@ -159,7 +165,7 @@ pred gameTrace {
         solved[lastBoard]
 
     }
-
+    noCycles
     allWellformed
     
 }
@@ -185,11 +191,6 @@ twoBoards: run {
         solved[b2] 
         b1.next = b2
     }
-    gameTrace
-    //Having a randomly initialized board and try to trace whether there is final solution or not. 
-    //as the b2 is the next of the b1, so b2 should contain the turn into a final state with all false
-    //we successfully tested out the the result, it will truns all the lights to a false in the b2. 
-    //
 } for exactly 2 Board, 9 Light, 4 Int for {next is linear}
 
 -- shows valid solved board config
