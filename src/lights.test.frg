@@ -56,7 +56,7 @@ test suite for validneighbors {
     }
     
     // negative case: incorrect neighbor assigned
-    example badNeighbors1 is (all b: Board | some l: Light | not validneighbors[l, b]) for {
+    example badNeighbors is (all b: Board | some l: Light | not validneighbors[l, b]) for {
         Board = `Board0
         Light = `L00 + `L01 + `L02 +
                 `L10 + `L11 + `L12 +
@@ -227,7 +227,7 @@ test suite for wellformed {
         
         // L00 missing at 0, 0
         `Board0.position =
-            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+            (0,1) -> `L01 + (0,2) -> `L02 +
             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
