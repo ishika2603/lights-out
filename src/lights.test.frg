@@ -1,6 +1,8 @@
 #lang forge/froglet
 
 open "lights.frg"
+//board should be 3 by 3 and all the lights must be on the board
+
 
 test suite for validneighbors {
 
@@ -69,7 +71,7 @@ test suite for validneighbors {
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
         
         `L00.right = `L01
-        // incorrect neighbor
+        // incorrect neighbor as The neigbor of [0,0] should be [0,1] and[1,0]
         `L00.down = `L11
 
         `L01.left = `L00
@@ -102,7 +104,7 @@ test suite for validneighbors {
         `L22.up = `L12
         `L22.left = `L21
     }
-
+    
 }
 
 pred lights_on_board[b: Board] {
@@ -161,7 +163,7 @@ test suite for wellformed {
         `L22.up = `L12
         `L22.left = `L21
     }
-
+    
     // negative case: incorrect neighbors
     example invalidWellformedBoard is {all b: Board | not wellformed[b] } for {
         Board = `Board0
@@ -225,7 +227,58 @@ test suite for wellformed {
         
         // L00 missing at 0, 0
         `Board0.position =
-            (0,1) -> `L01 + (0,2) -> `L02 +
+            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L02 +
+            (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
+            (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
+
+        
+        `L00.right = `L01
+        `L00.down = `L10
+
+        `L01.left = `L00
+        `L01.right = `L02
+        `L01.down = `L11
+
+        `L02.left = `L01
+        `L02.down = `L12
+
+        `L10.up = `L00
+        `L10.right = `L11
+        `L10.down = `L20
+
+        `L11.up = `L01
+        `L11.left = `L10
+        `L11.right = `L12
+        `L11.down = `L21
+
+        `L12.up = `L02
+        `L12.left = `L11
+        `L12.down = `L22
+
+        `L20.up = `L10
+        `L20.right = `L21
+
+        `L21.up = `L11
+        `L21.left = `L20
+        `L21.right = `L22
+
+        `L22.up = `L12
+        `L22.left = `L21
+    }
+
+    // Invalid double position for board0.
+    example invalidpositionforwellformed is {all b: Board | not wellformed[b] } for {
+        Board = `Board0
+        Light = `L00 + `L01 + `L02 +
+                `L10 + `L11 + `L12 +
+                `L20 + `L21 + `L22
+        Boolean = `True + `False
+        True = `True
+        False = `False
+        
+        //case where the L01 has two position which is not allowed.1
+        `Board0.position =
+            (0,0) -> `L00 + (0,1) -> `L01 + (0,2) -> `L01 + 
             (1,0) -> `L10 + (1,1) -> `L11 + (1,2) -> `L12 +
             (2,0) -> `L20 + (2,1) -> `L21 + (2,2) -> `L22
 
@@ -550,6 +603,3 @@ test suite for toggle {
         }
 
 }
-
-
-
