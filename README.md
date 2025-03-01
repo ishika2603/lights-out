@@ -12,7 +12,7 @@ The goal is to model the Lights Out puzzle, a grid-based game where pressing a c
 ### Initial and Solved Conditions
 Below are visual representations of the puzzle's initial state (all lights on) and the solved state (all lights off).
 
-#### Initial State (All Lights On)
+#### Initial State (Some Lights On)
 ![Example of Initial State](images/initial_state.png)
 
 #### Solved State (All Lights Off)
