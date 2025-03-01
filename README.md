@@ -10,7 +10,7 @@ The goal is to model the Lights Out puzzle, a grid-based game where pressing a c
 - **Visualization**: Uses default Forge visualization showing cell states and adjacency relations.
 
 ### Initial and Solved Conditions
-Below are visual representations of the puzzle's initial state (all lights on) and the solved state (all lights off).
+Below are visual representations of the puzzle's initial state (lights on) and the solved state (all lights off).
 
 #### Initial State (Some Lights On)
 ![Example of Initial State](images/initial_state.png)
