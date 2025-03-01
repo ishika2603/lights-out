@@ -7,8 +7,8 @@ const GRID_MARGIN = 20;
 const GRID_Y = 100;
 const GRID_X = 100;
 
-const LIGHT_ON_COLOR = "#FFD700"; // Yellow when light is on
-const LIGHT_OFF_COLOR = "#333333"; // Dark gray when light is off
+const LIGHT_ON_COLOR = "#FFD700";
+const LIGHT_OFF_COLOR = "#333333";
 const CELL_BORDER_COLOR = "black";
 const CELL_BORDER_WIDTH = 3;
 
@@ -17,17 +17,17 @@ const SVG_HEIGHT = GRID_ROWS * CELL_SIZE + 2 * GRID_MARGIN;
 
 const BUTTONS = ['PREV', 'NEXT'];
 // TODO
-// const BUTTON_WIDTH = SVG_WIDTH / BUTTONS.length * 0.9;
-// const BUTTON_HEIGHT = (SCREEN_HEIGHT - GRAPH_HEIGHT) * 0.7;
-// const BUTTON_SPACING = SCREEN_WIDTH / (BUTTONS.length + 1) * 0.1;
-// const BUTTON_Y = GRAPH_HEIGHT;
-// const BUTTON_XS = BUTTONS.map((_, idx) =>
-//     BUTTON_SPACING + idx * (BUTTON_WIDTH + BUTTON_SPACING)
-// );
+const BUTTON_WIDTH = SVG_WIDTH / BUTTONS.length * 0.6;
+const BUTTON_HEIGHT = (SVG_HEIGHT) * 0.2;
+const BUTTON_SPACING = GRID_X - CELL_BORDER_WIDTH;
+const BUTTON_START_SPACING = GRID_X;
+const BUTTON_Y = GRID_Y * 4.25;
+const BUTTON_XS = BUTTONS.map((_, idx) =>
+    BUTTON_START_SPACING + idx * (BUTTON_WIDTH + BUTTON_SPACING)
+);
 
-// const BUTTON_TEXT_Y = BUTTON_Y + BUTTON_HEIGHT / 2;
-// const BUTTON_TEXT_XS = BUTTON_XS.map(x => x + BUTTON_WIDTH / 2);
-
+const BUTTON_TEXT_Y = BUTTON_Y + BUTTON_HEIGHT / 2;
+const BUTTON_TEXT_XS = BUTTON_XS.map(x => x + BUTTON_WIDTH / 2);
 
 const svgContainer = document.getElementById('svg-container');
 svgContainer.getElementsByTagName('svg')[0].style.height = `${SVG_HEIGHT}px`;
@@ -123,29 +123,30 @@ function render_current_board(b, grid) {
  * @param {Array<Function>} callbacks Functions to be called when the button is clicked
  * @returns {Array<Rectangle | TextBox>} Array of Rectangle and TextBox objects
  */
-// function setup_buttons() {
-//   for (let i = 0; i < N; i++) {
-//     const text_box = new TextBox({
-//         text: BUTTONS[i],
-//         coords: { x: BUTTON_TEXT_XS[i], y: BUTTON_TEXT_Y},
-//         fontSize: BUTTON_WIDTH / 5.5,
-//         color: 'black',
-//         events: [ { event: 'click', callback: () => { 
-//                     callbacks[i]();
-//                     stage.render(svg, document);
-//                 } } ]
-//     });
-//     const box = new Rectangle({
-//         coords: { x: BUTTON_XS[i], y: BUTTON_Y},
-//         width: BUTTON_WIDTH,
-//         height: BUTTON_HEIGHT,
-//         color: 'grey',
-//     });
-//     buttons.push(box);
-//     buttons.push(text_box);
-// }
-// return buttons;
-// }
+function setup_buttons(N, callbacks) {
+  let buttons = [];
+  for (let i = 0; i < N; i++) {
+    const text_box = new TextBox({
+        text: BUTTONS[i],
+        coords: { x: BUTTON_TEXT_XS[i], y: BUTTON_TEXT_Y},
+        fontSize: BUTTON_WIDTH / 5.5,
+        color: 'black',
+        events: [ { event: 'click', callback: () => { 
+                    callbacks[i]();
+                    stage.render(svg, document);
+                } } ]
+    });
+    const box = new Rectangle({
+        coords: { x: BUTTON_XS[i], y: BUTTON_Y},
+        width: BUTTON_WIDTH,
+        height: BUTTON_HEIGHT,
+        color: 'grey',
+    });
+    buttons.push(box);
+    buttons.push(text_box);
+}
+return buttons;
+}
 
 
 
@@ -156,7 +157,8 @@ const stage = new Stage();
 let grid = create_grid()
 let board = getStartingBoard()
 render_current_board(board, grid)
-
+let buttons = setup_buttons(2)
+buttons.forEach(button => stage.add(button));
 
 
 stage.add(new TextBox({

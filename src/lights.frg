@@ -137,7 +137,6 @@ pred toggle[pre: Board, row, col: Int, post: Board] {
         }
     }
 }
-//making sure that the board is not refering to itself. 
 
 pred allWellformed { all b: Board | wellformed[b]}
 
@@ -165,9 +164,6 @@ pred gameTrace {
     
 }
 
-
-//making sure that the max trace lengths is 30 
-
 -- shows a valid starting board config
 startingBoard: run {
     some b: Board | { 
@@ -176,8 +172,9 @@ startingBoard: run {
     }
 } for exactly 1 Board, 9 Light, 4 Int
 
-//making sure that the max trace lengths is 30 
+-- making sure that the max trace lengths is 30 
 option max_tracelength 30
+
 -- should show state that turns into solved board with one move
 twoBoards: run {
     some b1, b2: Board | { 
